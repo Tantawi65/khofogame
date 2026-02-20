@@ -8,15 +8,13 @@ import { RoomManager } from './rooms/RoomManager.js';
 import { setupSocketHandlers } from './socket/handlers.js';
 import type { ServerToClientEvents, ClientToServerEvents } from '@shared/types.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
 
-// Serve static files from client build in production
-const clientPath = path.join(__dirname, '../../client/dist');
-app.use(express.static(clientPath));
+// Serve static files from client build in production (bulletproof path)
+const clientDistPath = path.join(process.cwd(), '../client/dist');
+app.use(express.static(clientDistPath));
 
 const httpServer = createServer(app);
 
@@ -46,7 +44,7 @@ io.on('connection', (socket) => {
 
 // Serve index.html for all non-API routes (SPA support)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(clientPath, 'index.html'));
+  res.sendFile(path.join(clientDistPath, 'index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
