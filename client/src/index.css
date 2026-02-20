@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: 'Cinzel', serif;
+  background-color: #1a1a2e;
+  color: #f5f5dc;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Landscape lock overlay */
+.landscape-required {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 20px;
+}
+
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .landscape-required {
+    display: flex !important;
+  }
+  
+  .game-content {
+    display: none !important;
+  }
+}
+
+/* Card styles */
+.card {
+  @apply relative rounded-lg overflow-hidden cursor-pointer transition-all duration-200;
+  aspect-ratio: 2/3;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card:hover {
+  @apply scale-105;
+  z-index: 10;
+}
+
+.card.selected {
+  @apply ring-4 ring-egyptian-gold scale-110;
+  z-index: 20;
+}
+
+.card.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.card.disabled:hover {
+  transform: none;
+}
+
+.card-image {
+  @apply w-full h-full object-cover;
+}
+
+.card-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent;
+}
+
+.card-name {
+  @apply absolute bottom-0 left-0 right-0 p-2 text-center;
+}
+
+.card-name-en {
+  @apply text-xs font-semibold text-papyrus;
+}
+
+.card-name-ar {
+  @apply text-sm font-bold text-egyptian-gold;
+  direction: rtl;
+}
+
+/* Half card indicator */
+.half-indicator {
+  @apply absolute top-1 right-1 bg-egyptian-gold text-black text-xs font-bold px-1 rounded;
+}
+
+/* Mummy card danger */
+.card.mummy {
+  @apply animate-pulse-danger;
+}
+
+/* Button styles */
+.btn {
+  @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-primary {
+  @apply bg-egyptian-gold text-nile-blue hover:bg-yellow-500;
+  @apply active:scale-95;
+}
+
+.btn-danger {
+  @apply bg-mummy-red text-white hover:bg-red-700;
+  @apply active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-nile-blue text-papyrus border-2 border-egyptian-gold;
+  @apply hover:bg-egyptian-gold hover:text-nile-blue;
+  @apply active:scale-95;
+}
+
+/* Modal styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/70 flex items-center justify-center z-50;
+  @apply backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply bg-gradient-to-br from-nile-blue to-gray-900 rounded-xl p-6;
+  @apply border-2 border-egyptian-gold shadow-2xl;
+  @apply max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
+.modal-title {
+  @apply text-xl font-bold text-egyptian-gold mb-4 text-center;
+}
+
+/* Toast/Notification styles */
+.toast {
+  @apply fixed top-4 left-1/2 transform -translate-x-1/2 z-50;
+  @apply px-6 py-3 rounded-lg font-semibold shadow-lg;
+  @apply animate-bounce;
+}
+
+.toast-info {
+  @apply bg-nile-blue text-papyrus border border-egyptian-gold;
+}
+
+.toast-success {
+  @apply bg-green-700 text-white;
+}
+
+.toast-warning {
+  @apply bg-yellow-600 text-black;
+}
+
+.toast-danger {
+  @apply bg-mummy-red text-white;
+}
+
+/* Player avatar */
+.player-avatar {
+  @apply w-12 h-12 rounded-full bg-egyptian-gold flex items-center justify-center;
+  @apply text-nile-blue font-bold text-lg;
+}
+
+.player-avatar.current-turn {
+  @apply ring-4 ring-green-500 animate-pulse;
+}
+
+.player-avatar.eliminated {
+  @apply opacity-50 grayscale;
+}
+
+/* Deck pile */
+.deck-pile {
+  @apply relative cursor-pointer;
+}
+
+.deck-pile::after {
+  @apply absolute -bottom-1 -right-1 bg-egyptian-gold text-nile-blue;
+  @apply text-xs font-bold px-2 py-1 rounded;
+  content: attr(data-count);
+}
+
+/* Game board */
+.game-board {
+  @apply flex-1 flex flex-col justify-between p-4;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Hand area */
+.hand-area {
+  @apply flex justify-center items-end gap-1 p-2;
+  max-width: 100%;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.hand-area .card {
+  @apply flex-shrink-0;
+  width: 60px;
+  max-width: 80px;
+}
+
+@media (min-width: 768px) {
+  .hand-area {
+    @apply gap-2 p-4;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  
+  .hand-area .card {
+    width: 100px;
+    max-width: 120px;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4a843;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e5b854;
+}
+
+/* King Ra countdown */
+.king-ra-timer {
+  @apply w-full h-2 bg-gray-700 rounded-full overflow-hidden mt-2;
+}
+
+.king-ra-timer-bar {
+  @apply h-full bg-gradient-to-r from-egyptian-gold to-mummy-red;
+  transition: width 0.1s linear;
+}
+
+/* Input styles */
+input[type="text"], input[type="number"] {
+  @apply w-full px-4 py-2 rounded-lg bg-nile-blue/50 border border-egyptian-gold;
+  @apply text-papyrus placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-egyptian-gold;
+}
+
+/* Room code display */
+.room-code {
+  @apply bg-nile-blue px-4 py-2 rounded-lg text-2xl font-bold tracking-widest;
+  @apply border-2 border-egyptian-gold text-egyptian-gold;
+}
