@@ -73,7 +73,9 @@ export class GameEngine {
     ];
     
     for (const cardId of halfCards) {
-      this.deck.push(...createCardInstances(cardId, playerCount));
+      // If playerCount is odd, add one more card to make it even
+      const halfCount = playerCount % 2 === 0 ? playerCount : playerCount + 1;
+      this.deck.push(...createCardInstances(cardId, halfCount));
     }
     
     // Add Take a Lap cards: N+1 total (N distributed, 1 in deck)
