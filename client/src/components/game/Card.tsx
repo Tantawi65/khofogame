@@ -80,10 +80,7 @@ export function Card({
             </span>
           )}
           
-          <div className="card-name">
-            <p className="card-name-en">{cardDef.nameEn}</p>
-            <p className="card-name-ar">{cardDef.nameAr}</p>
-          </div>
+          {/* Card name removed: image alone identifies the card */}
         </>
       )}
     </motion.div>
