@@ -105,11 +105,9 @@ export class GameEngine {
     if (defuseCards.length > 0) {
       this.deck.push(...defuseCards);
     }
-    
-    // Add mummy cards to deck
+
+    // Add mummy cards and shuffle immediately for random distribution
     this.deck.push(...mummyCards);
-    
-    // Final shuffle
     this.deck = shuffleArray(this.deck);
     
     // Start the game
