@@ -200,30 +200,38 @@ export function GameBoard() {
         </div>
 
         {/* Hand */}
+
         <div className="hand-area">
-          <AnimatePresence mode="popLayout">
-            {myHand.map((card, index) => (
-              <motion.div
-                key={card.instanceId}
-                layout
-                initial={{ opacity: 0, y: 50, rotate: -10 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0, 
-                  rotate: 0,
-                  transition: { delay: index * 0.05 }
-                }}
-                exit={{ opacity: 0, y: -50, scale: 0.5 }}
-              >
-                <Card
-                  card={card}
-                  selected={selectedCards.includes(card.instanceId)}
-                  onClick={() => handleCardClick(card)}
-                  disabled={!isMyTurn}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {myPlayer && !myPlayer.isAlive ? (
+            <div className="flex flex-col items-center justify-center w-full py-8">
+              <img src="/card_mummy.png" alt="Mummified" className="w-32 mb-4" />
+              <p className="text-mummy-red text-2xl font-bold">You are mummified!</p>
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {myHand.map((card, index) => (
+                <motion.div
+                  key={card.instanceId}
+                  layout
+                  initial={{ opacity: 0, y: 50, rotate: -10 }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0, 
+                    rotate: 0,
+                    transition: { delay: index * 0.05 }
+                  }}
+                  exit={{ opacity: 0, y: -50, scale: 0.5 }}
+                >
+                  <Card
+                    card={card}
+                    selected={selectedCards.includes(card.instanceId)}
+                    onClick={() => handleCardClick(card)}
+                    disabled={!isMyTurn}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
         </div>
 
         {/* Draw button for mobile */}
