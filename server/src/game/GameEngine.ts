@@ -81,8 +81,8 @@ export class GameEngine {
     // Add Take a Lap cards: N+1 total (N distributed, 1 in deck)
     const defuseCards = createCardInstances('take_a_lap', playerCount + 1);
     
-    // Add Mummy cards: always 4
-    const mummyCards = createCardInstances('mummified', 4);
+    // Add Mummy cards: same as number of players
+    const mummyCards = createCardInstances('mummified', playerCount);
     
     // Shuffle deck (without defuse and mummy for now)
     this.deck = shuffleArray(this.deck);
