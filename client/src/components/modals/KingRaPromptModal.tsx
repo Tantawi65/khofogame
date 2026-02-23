@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { CARD_DATABASE, type CardId } from '@shared/types';
+import { CARD_DATABASE } from '@shared/types';
 import { useGameStore } from '../../store/gameStore';
 import { emitKingRaResponse } from '../../socket/socket';
 
@@ -19,9 +19,9 @@ export function KingRaPromptModal({ onClose }: KingRaPromptModalProps) {
   const isMounted = useRef(true);
 
   const hasKingRa = myHand.some(c => c.cardId === 'king_ra_says_no');
-  const actorName = modalData.kingRaPlayerName || (gameState?.players.find(p => p.id === modalData.kingRaPlayerId)?.name ?? 'A player');
+  const actorName = gameState?.players.find((p: any) => p.id === modalData.kingRaPlayerId)?.name ?? 'A player';
   const cardDef = modalData.kingRaCardPlayed ? CARD_DATABASE[modalData.kingRaCardPlayed] : null;
-  const targetName = modalData.kingRaTargetName || (modalData.kingRaTargetId ? (gameState?.players.find(p => p.id === modalData.kingRaTargetId)?.name ?? 'Unknown') : undefined);
+  const targetName = modalData.kingRaTargetId ? (gameState?.players.find((p: any) => p.id === modalData.kingRaTargetId)?.name ?? 'Unknown') : undefined;
 
   // Track mount state
   useEffect(() => {
@@ -69,7 +69,7 @@ export function KingRaPromptModal({ onClose }: KingRaPromptModalProps) {
     onClose();
   };
 
-  const progressPercent = (timeLeft / timeout) * 100;
+  const progressPercent = (timeLeft / (modalData.kingRaTimeout ?? 1)) * 100;
 
   return (
     <motion.div

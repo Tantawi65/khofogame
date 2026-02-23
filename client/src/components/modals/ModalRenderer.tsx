@@ -48,9 +48,6 @@ export function ModalRenderer() {
         return (
           <KingRaPromptModal
             key={`king-ra-${modalData.kingRaPlayerId}-${modalData.kingRaCardPlayed}`}
-            playerId={modalData.kingRaPlayerId}
-            cardPlayed={modalData.kingRaCardPlayed}
-            timeout={modalData.kingRaTimeout ?? 5000}
             onClose={closeModal}
           />
         );

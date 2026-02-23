@@ -194,10 +194,8 @@ export function initializeSocket(): void {
     // Show the reaction window to ALL players (they can only use it if they have King Ra)
     store.openModal('king-ra-prompt', {
       kingRaPlayerId: actorId,
-      kingRaPlayerName: actorName,
       kingRaCardPlayed: cardPlayed,
       kingRaTargetId: targetId,
-      kingRaTargetName: targetName,
       kingRaTimeout: timeout,
     });
   });
