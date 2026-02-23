@@ -1,3 +1,7 @@
+// Host kicks a player before game starts
+export const emitKickPlayer = (targetPlayerId: string): void => {
+  socket.emit('kickPlayer', targetPlayerId);
+};
 import { io, Socket } from 'socket.io-client';
 import type { ServerToClientEvents, ClientToServerEvents, CardId } from '@shared/types';
 import { useGameStore } from '../store/gameStore';

@@ -254,6 +254,8 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
+    // Host kicks a player before game starts
+    kickPlayer: (targetPlayerId: string) => void;
   // Lobby events
   createRoom: (playerName: string, roomName: string) => void;
   joinRoom: (playerName: string, roomId: string) => void;

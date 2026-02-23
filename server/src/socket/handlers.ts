@@ -19,6 +19,27 @@ export function setupSocketHandlers(
   socket: GameSocket,
   roomManager: RoomManager
 ): void {
+    // Host kicks a player before game starts
+    socket.on('kickPlayer', (targetPlayerId: string) => {
+      // Only host can kick, and only before game starts
+      const room = roomManager.kickPlayer(socket.id, targetPlayerId);
+      if (!room) {
+        socket.emit('error', 'Failed to remove player. Only host can kick before game starts.');
+        return;
+      }
+      // Notify kicked player
+      io.to(targetPlayerId).emit('roomLeft');
+      // Notify all in room
+      io.to(room.id).emit('roomUpdated', {
+        id: room.id,
+        name: room.name,
+        hostId: room.hostId,
+        players: room.players,
+        maxPlayers: room.maxPlayers,
+        gameState: room.gameState,
+      });
+      io.emit('roomList', roomManager.getRoomList());
+    });
   // ============ LOBBY HANDLERS ============
   
   socket.on('getRooms', () => {

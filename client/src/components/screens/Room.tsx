@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore';
-import { emitSetReady, emitStartGame, emitLeaveRoom } from '../../socket/socket';
+import { emitSetReady, emitStartGame, emitLeaveRoom, emitKickPlayer } from '../../socket/socket';
 
 export function Room() {
   const currentRoom = useGameStore((state) => state.currentRoom);
@@ -99,13 +99,23 @@ export function Room() {
                     )}
                   </div>
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
                   {player.isHost ? (
                     <span className="text-green-400">Ready</span>
                   ) : player.isReady ? (
                     <span className="text-green-400">✓ Ready</span>
                   ) : (
                     <span className="text-yellow-400">Waiting...</span>
+                  )}
+                  {/* Host can kick non-hosts before game starts */}
+                  {isHost && !player.isHost && (!currentRoom.gameState || currentRoom.gameState.phase !== 'playing') && (
+                    <button
+                      className="ml-2 btn btn-danger btn-xs"
+                      title={`Remove ${player.name}`}
+                      onClick={() => emitKickPlayer(player.id)}
+                    >
+                      Kick
+                    </button>
                   )}
                 </div>
               </motion.div>
