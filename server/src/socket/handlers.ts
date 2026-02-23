@@ -276,8 +276,10 @@ export function setupSocketHandlers(
       }
     }
     
-    // Execute card effect immediately
-    await executeCardEffect(io, socket, room.id, game, card.cardId, targetPlayerId, additionalData, roomManager);
+    // Execute card effect immediately ONLY for non-cancellable cards or if there are no other players
+    if (nonCancellableCards.includes(card.cardId) || game.getOtherAlivePlayers(socket.id).length === 0) {
+      await executeCardEffect(io, socket, room.id, game, card.cardId, targetPlayerId, additionalData, roomManager);
+    }
   });
 
   socket.on('kingRaResponse', (useKingRa: boolean) => {
