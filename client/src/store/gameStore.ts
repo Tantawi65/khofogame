@@ -40,6 +40,7 @@ export interface ModalData {
   kingRaPlayerId?: string;
   kingRaCardPlayed?: CardId;
   kingRaTimeout?: number;
+  kingRaTargetId?: string;
   duelChallenger?: { playerId: string; card: CardInstance };
   duelOpponent?: { playerId: string; card: CardInstance };
   duelWinnerId?: string;
