@@ -201,6 +201,10 @@ export function setupSocketHandlers(
     // Remove and discard the card(s)
     game.removeCardFromHand(socket.id, cardInstanceId);
     game.discardCard(card);
+    // If King Ra is played, immediately update game state so discard pile reflects it
+    if (card.cardId === 'king_ra_says_no') {
+      io.to(room.id).emit('gameStateUpdated', game.getGameState());
+    }
     
     // For half cards, remove second copy
     let secondCard: CardInstance | null = null;
@@ -318,6 +322,8 @@ export function setupSocketHandlers(
         game.removeCardFromHand(socket.id, kingRaCard.instanceId);
         game.discardCard(kingRaCard);
         pending.kingRaCount++;
+        // Immediately update game state so discard pile reflects King Ra
+        io.to(room.id).emit('gameStateUpdated', game.getGameState());
         
         console.log('Emitting kingRaResponse');
         io.to(room.id).emit('kingRaResponse', socket.id, true);
