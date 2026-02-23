@@ -164,16 +164,14 @@ export function initializeSocket(): void {
   // King Ra events
   socket.on('kingRaPrompt', (payload) => {
     // Support both old and new payloads for backward compatibility
-    let actorId, actorName, cardPlayed, targetId, targetName, timeout;
+    let actorId, cardPlayed, targetId, timeout;
     if (typeof payload === 'object' && payload !== null && 'actorId' in payload) {
-      ({ actorId, actorName, cardPlayed, targetId, targetName, timeout } = payload);
+      ({ actorId, cardPlayed, targetId, timeout } = payload);
     } else {
       // Old style: (playerId, cardPlayed, timeout)
       actorId = payload;
-      actorName = undefined;
       cardPlayed = arguments[1];
       targetId = undefined;
-      targetName = undefined;
       timeout = arguments[2];
     }
     const state = useGameStore.getState();
