@@ -411,19 +411,22 @@ export function setupSocketHandlers(
   socket.on('spellboundRequest', (targetId: string, requestedCardId: CardId) => {
     const room = roomManager.getPlayerRoom(socket.id);
     if (!room?.game) return;
-    
     const game = room.game;
-    
+    // If there is a pending King Ra window for Spellbound, ignore/queue the request
+    if (game.pendingAction && game.pendingAction.cardPlayed === 'spellbound') {
+      // Optionally, you could queue this request and process it after King Ra resolves
+      socket.emit('error', 'Please wait for King Ra reaction to resolve before Spellbound request.');
+      return;
+    }
+    // ...existing code...
     // Check if target has the card
     if (game.hasCard(targetId, requestedCardId)) {
       // Success - take one copy
       const targetHand = game.getPlayerHand(targetId);
       const cardToTake = targetHand.find(c => c.cardId === requestedCardId);
-      
       if (cardToTake) {
         game.removeCardFromHand(targetId, cardToTake.instanceId);
         game.addCardToHand(socket.id, cardToTake);
-        
         socket.emit('spellboundResult', true, requestedCardId);
         io.to(socket.id).emit('handUpdated', game.getPlayerHand(socket.id));
         io.to(targetId).emit('handUpdated', game.getPlayerHand(targetId));
@@ -431,10 +434,8 @@ export function setupSocketHandlers(
     } else {
       // Failure - asker draws as penalty
       socket.emit('spellboundResult', false);
-      
       handleDrawCard(io, socket, room.id, game, roomManager, true);
     }
-    
     roomManager.updateGameState(room.id);
     io.to(room.id).emit('gameStateUpdated', game.getGameState());
   });
