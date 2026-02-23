@@ -226,10 +226,7 @@ export function setupSocketHandlers(
     
     // Cards that cannot be cancelled by King Ra (self-affecting or neutral)
     const nonCancellableCards = [
-      'shuffle_it',    // Just shuffles deck
-      'sharp_eye',     // Just peeks at cards
-      'wait_a_sec',    // Just skips drawing
-      'flip_the_table' // Rearranges deck
+      'take_a_lap' // Only Take a Lap cannot be cancelled
     ];
     
     // For cancellable cards, show reaction window to ALL players
