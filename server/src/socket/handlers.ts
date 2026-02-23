@@ -231,7 +231,17 @@ export function setupSocketHandlers(
         
         // Send reaction window to ALL other players (they'll auto-decline if no King Ra)
         for (const player of otherPlayers) {
-          io.to(player.id).emit('kingRaPrompt', socket.id, card.cardId, KING_RA_TIMEOUT);
+          // Send actor and target info for King Ra modal context
+          const actor = room.players.find(p => p.id === socket.id);
+          const target = room.players.find(p => p.id === targetPlayerId);
+          io.to(player.id).emit('kingRaPrompt', {
+            actorId: socket.id,
+            actorName: actor?.name ?? 'Unknown',
+            cardPlayed: card.cardId,
+            targetId: targetPlayerId,
+            targetName: target?.name ?? (targetPlayerId ? 'Unknown' : undefined),
+            timeout: KING_RA_TIMEOUT
+          });
         }
         
         // Set timeout
@@ -300,7 +310,16 @@ export function setupSocketHandlers(
           pending.kingRaResponses.clear(); // Clear responses for the new round
           
           for (const playerId of otherPlayersWithKingRa) {
-            io.to(playerId).emit('kingRaPrompt', socket.id, 'king_ra_says_no', KING_RA_TIMEOUT);
+            // Chain King Ra: actor is the player who just played King Ra, card is always king_ra_says_no
+            const actor = room.players.find(p => p.id === socket.id);
+            io.to(playerId).emit('kingRaPrompt', {
+              actorId: socket.id,
+              actorName: actor?.name ?? 'Unknown',
+              cardPlayed: 'king_ra_says_no',
+              targetId: undefined,
+              targetName: undefined,
+              timeout: KING_RA_TIMEOUT
+            });
           }
           
           setTimeout(() => {

@@ -220,7 +220,17 @@ export interface ServerToClientEvents {
   swapResult: (youGave: CardInstance, youReceived: CardInstance, otherPlayerName: string) => void;
   
   // King Ra events
-  kingRaPrompt: (playerId: string, cardPlayed: CardId, timeout: number) => void;
+  /**
+   * New: Accepts an object for context-rich modal (actor, card, target, timeout)
+   * Old: Accepts (playerId, cardPlayed, timeout) for backward compatibility
+   */
+  kingRaPrompt: (
+    payload:
+      | { actorId: string; actorName?: string; cardPlayed: CardId; targetId?: string; targetName?: string; timeout: number }
+      | string, // playerId (legacy)
+    cardPlayed?: CardId, // legacy
+    timeout?: number // legacy
+  ) => void;
   kingRaResponse: (responderId: string, didCancel: boolean) => void;
   actionPending: (cardId: CardId, timeout: number) => void;
   actionResolved: (cardId: CardId) => void;

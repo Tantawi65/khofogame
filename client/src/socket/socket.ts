@@ -158,30 +158,42 @@ export function initializeSocket(): void {
   });
   
   // King Ra events
-  socket.on('kingRaPrompt', (playerId, cardPlayed, timeout) => {
+  socket.on('kingRaPrompt', (payload) => {
+    // Support both old and new payloads for backward compatibility
+    let actorId, actorName, cardPlayed, targetId, targetName, timeout;
+    if (typeof payload === 'object' && payload !== null && 'actorId' in payload) {
+      ({ actorId, actorName, cardPlayed, targetId, targetName, timeout } = payload);
+    } else {
+      // Old style: (playerId, cardPlayed, timeout)
+      actorId = payload;
+      actorName = undefined;
+      cardPlayed = arguments[1];
+      targetId = undefined;
+      targetName = undefined;
+      timeout = arguments[2];
+    }
     const state = useGameStore.getState();
-    
     // Don't show prompt to the player who played the card (they can't cancel their own action)
-    if (playerId === state.playerId) {
+    if (actorId === state.playerId) {
       return;
     }
-    
     // Don't show if action was recently resolved (stale event from network delay)
     if (Date.now() - state.lastActionResolvedAt < 2000) {
       return;
     }
-    
     // Don't show if a non-related modal is open (action already resolved and moved on)
     const currentModal = state.activeModal;
     if (currentModal && currentModal !== 'king-ra-prompt') {
       // Another modal is already showing (like duel result), skip this
       return;
     }
-    
     // Show the reaction window to ALL players (they can only use it if they have King Ra)
     store.openModal('king-ra-prompt', {
-      kingRaPlayerId: playerId,
+      kingRaPlayerId: actorId,
+      kingRaPlayerName: actorName,
       kingRaCardPlayed: cardPlayed,
+      kingRaTargetId: targetId,
+      kingRaTargetName: targetName,
       kingRaTimeout: timeout,
     });
   });

@@ -4,24 +4,24 @@ import { CARD_DATABASE, type CardId } from '@shared/types';
 import { useGameStore } from '../../store/gameStore';
 import { emitKingRaResponse } from '../../socket/socket';
 
+
+// Updated props: get all info from modalData
 interface KingRaPromptModalProps {
-  playerId?: string;
-  cardPlayed?: CardId;
-  timeout: number;
   onClose: () => void;
 }
 
-export function KingRaPromptModal({ playerId, cardPlayed, timeout, onClose }: KingRaPromptModalProps) {
-  const [timeLeft, setTimeLeft] = useState(timeout);
+export function KingRaPromptModal({ onClose }: KingRaPromptModalProps) {
+  const modalData = useGameStore((state) => state.modalData);
+  const [timeLeft, setTimeLeft] = useState(modalData.kingRaTimeout ?? 0);
   const gameState = useGameStore((state) => state.gameState);
   const myHand = useGameStore((state) => state.myHand);
   const hasResponded = useRef(false);
   const isMounted = useRef(true);
-  
+
   const hasKingRa = myHand.some(c => c.cardId === 'king_ra_says_no');
-  console.log('KingRaPromptModal render - myHand:', myHand.map(c => c.cardId), 'hasKingRa:', hasKingRa);
-  const playerName = gameState?.players.find(p => p.id === playerId)?.name ?? 'A player';
-  const cardDef = cardPlayed ? CARD_DATABASE[cardPlayed] : null;
+  const actorName = modalData.kingRaPlayerName || (gameState?.players.find(p => p.id === modalData.kingRaPlayerId)?.name ?? 'A player');
+  const cardDef = modalData.kingRaCardPlayed ? CARD_DATABASE[modalData.kingRaCardPlayed] : null;
+  const targetName = modalData.kingRaTargetName || (modalData.kingRaTargetId ? (gameState?.players.find(p => p.id === modalData.kingRaTargetId)?.name ?? 'Unknown') : undefined);
 
   // Track mount state
   useEffect(() => {
@@ -93,7 +93,7 @@ export function KingRaPromptModal({ playerId, cardPlayed, timeout, onClose }: Ki
           transition={{ repeat: Infinity, duration: 0.5 }}
         >
           <p className="text-papyrus">
-            <span className="text-egyptian-gold font-bold">{playerName}</span> played:
+            <span className="text-egyptian-gold font-bold">{actorName}</span> played:
           </p>
           <p className="text-2xl font-bold text-mummy-red mt-2">
             {cardDef?.nameEn}
@@ -101,6 +101,11 @@ export function KingRaPromptModal({ playerId, cardPlayed, timeout, onClose }: Ki
           <p className="text-xl text-egyptian-gold" dir="rtl">
             {cardDef?.nameAr}
           </p>
+          {targetName && (
+            <p className="text-papyrus mt-2">
+              <span className="font-bold">Target:</span> <span className="text-egyptian-gold">{targetName}</span>
+            </p>
+          )}
         </motion.div>
 
         {/* Timer */}
